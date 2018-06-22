@@ -1,0 +1,3 @@
+[submodule "src/webapp/weather-genie-app"]
+	path = src/webapp/weather-genie-app
+	url = https://github.com/beele/WeatherGenieV2-Frontend.git
