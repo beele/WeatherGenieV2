@@ -56,7 +56,7 @@ export class BuienradarService {
                                 // Times are in UTC!
                                 moment(forecastedHour.date),
                                 forecastedHour.temperature, forecastedHour.feeltemperature,
-                                forecastedHour.iconcode,
+                                forecastedHour.iconcode, this.convertForecastIconCodeToWeatherCondition(forecastedHour.iconcode),
                                 forecastedHour.windspeed, forecastedHour.beaufort, forecastedHour.winddirection,
                                 forecastedHour.humidity, forecastedHour.precipitation, forecastedHour.precipitationmm,
                                 forecastedHour.uvindex, forecastedHour.sunshine, forecastedHour.sunpower,
@@ -71,7 +71,7 @@ export class BuienradarService {
                         moment(forecastedDay.date),
                         moment(forecastedDay.sunrise), moment(forecastedDay.sunset),
                         forecastedDay.temperature, forecastedDay.feeltemperature, forecastedDay.mintemp, forecastedDay.maxtemp,
-                        forecastedDay.iconcode,
+                        forecastedDay.iconcode, this.convertForecastIconCodeToWeatherCondition(forecastedDay.iconcode),
                         forecastedDay.windspeed, forecastedDay.beaufort, forecastedDay.winddirection,
                         forecastedDay.precipitation, forecastedDay.uvindex,
                         hours,
@@ -96,5 +96,52 @@ export class BuienradarService {
             }
             return rainForecasts;
         }));
+    }
+
+    private convertForecastIconCodeToWeatherCondition(iconCode: string): string {
+        switch (iconCode) {
+            case 'a':
+                return 'zonnig';
+            case 'b':
+                return 'plaatselijk bewolkt';
+            case 'c':
+                return 'bewolkt';
+            case 'd':
+                return 'plaatselijk bewolkt met mist';
+            case 'f':
+                return 'lichte buien';
+            case 'g':
+                return 'plaatselijk onweer';
+            case 'h':
+                return 'buien';
+            case 'i':
+                return 'nachtelijke sneeuwbuien';
+            case 'j':
+                return 'licht bewolkt';
+            case 'k':
+                return 'lichte buien';
+            case 'l':
+                return 'regen';
+            case 'm':
+                return 'lichte regen';
+            case 'n':
+                return 'mistig';
+            case 'o':
+                return 'licht bewolkt';
+            case 'p':
+                return 'bewolkt';
+            case 'q':
+                return 'regen';
+            case 'r':
+                return 'overwegend bewolkt';
+            case 's':
+                return 'onweer';
+            case 't':
+                return 'sneeuw';
+            case 'v':
+                return 'lichte sneeuw';
+            case 'w':
+                return 'smeltende sneeuw';
+        }
     }
 }

@@ -14,7 +14,7 @@ export class ForecastDay extends ForecastBase {
 
     constructor(date: Moment, sunrise: Moment, sunset: Moment,
                 temp: number, feelTemp: number, minTemp: number, maxTemp: number,
-                condition: string,
+                conditionCode: string, conditionText: string,
                 windSpeed: number, windBeaufort: number, windDirection: string,
                 precipitation: number, uvIndex: number,
                 hours: ForecastHour[]) {
@@ -22,7 +22,7 @@ export class ForecastDay extends ForecastBase {
         super(
             date,
             temp, feelTemp,
-            condition,
+            conditionCode, conditionText,
             windSpeed, windBeaufort, windDirection,
             precipitation, uvIndex,
         );

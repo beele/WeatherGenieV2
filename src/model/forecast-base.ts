@@ -7,7 +7,8 @@ export abstract class ForecastBase {
     temp: number;
     feelTemp: number;
 
-    condition: string;
+    conditionCode: string;
+    conditionText: string;
 
     windSpeed: number;
     windBeaufort: number;
@@ -18,14 +19,15 @@ export abstract class ForecastBase {
 
     constructor(date: Moment,
                 temp: number, feelTemp: number,
-                condition: string,
+                conditionCode: string, conditionText: string,
                 windSpeed: number, windBeaufort: number, windDirection: string,
                 precipitation: number, uvIndex: number) {
 
         this.date = date;
         this.temp = temp;
         this.feelTemp = feelTemp;
-        this.condition = condition;
+        this.conditionCode = conditionCode;
+        this.conditionText = conditionText;
         this.windSpeed = windSpeed;
         this.windBeaufort = windBeaufort;
         this.windDirection = windDirection;

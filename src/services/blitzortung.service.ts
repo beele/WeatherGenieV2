@@ -17,15 +17,17 @@ export class BlitzortungService {
 
     constructor() {
         this.strikes = [];
-        this.setupWebSocket();
+        this.setupWebSocket(Math.floor(Math.random() * 40) + 50  );
     }
 
-    private setupWebSocket() {
-        this.ws = new WebSocket('ws://ws.blitzortung.org:8058/');
+    private setupWebSocket(port: number) {
+        this.ws = new WebSocket('ws://ws.blitzortung.org:' + port + '/');
         this.ws.addEventListener('error', (err) => console.log(err.message));
 
+        // TODO: Implement heartbeat check with ping() function! (https://www.npmjs.com/package/ws#how-to-detect-and-close-broken-connections)
+
         this.ws.on('open', () => {
-            console.log('Sending request for lightning data');
+            console.log('Socket connected, sending request for lightning data');
             this.ws.send(this.boundary, (error) => {
                 if (error) {
                     // TODO: Retry websocket connection!

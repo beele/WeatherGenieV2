@@ -10,7 +10,7 @@ export class ForecastHour extends ForecastBase {
 
     constructor(date: Moment,
                 temp: number, feelTemp: number,
-                condition: string,
+                conditionCode: string, conditionText: string,
                 windSpeed: number, windBeaufort: number, windDirection: string,
                 humidity: number, precipitation: number, precipitationActual: number,
                 uvIndex: number, sunshine: number, sunpower: number) {
@@ -18,7 +18,7 @@ export class ForecastHour extends ForecastBase {
         super(
             date,
             temp, feelTemp,
-            condition,
+            conditionCode, conditionText,
             windSpeed, windBeaufort, windDirection,
             precipitation, uvIndex,
         );
