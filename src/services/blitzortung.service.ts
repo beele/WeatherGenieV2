@@ -4,6 +4,8 @@ import {from, Observable} from 'rxjs';
 import {LightningStrike} from '../model/lightning-strike';
 import * as moment from 'moment';
 import {filter, toArray} from 'rxjs/operators';
+import {setInterval} from 'timers';
+import {noop} from 'rxjs/internal-compatibility';
 
 @Injectable()
 export class BlitzortungService {
@@ -15,22 +17,58 @@ export class BlitzortungService {
     private boundary: string = '{"west":-12,"east":20,"north":56,"south":33.6}';
     private ws;
 
+    private port: number = 8050;
+    private maxPort: number = 8090;
+
+    private isAlive: boolean = false;
+
     constructor() {
         this.strikes = [];
-        this.setupWebSocket(Math.floor(Math.random() * 40) + 50  );
+        this.setupWebSocket(Math.floor(this.port));
     }
 
     private setupWebSocket(port: number) {
-        this.ws = new WebSocket('ws://ws.blitzortung.org:' + port + '/');
-        this.ws.addEventListener('error', (err) => console.log(err.message));
+        // TODO: Check if port is maxed!
 
-        // TODO: Implement heartbeat check with ping() function! (https://www.npmjs.com/package/ws#how-to-detect-and-close-broken-connections)
+        const endpoint: string = 'ws://ws.blitzortung.org:' + port + '/';
+        console.log('connecting to: ' + endpoint);
+        this.ws = new WebSocket(endpoint);
+        this.ws.addEventListener('error', (err) => {
+            console.log(err.message);
+            this.isAlive = false;
+            this.handleSocketError();
+        });
+        this.ws.addEventListener('close', () => {
+            console.log('socket closed');
+            this.isAlive = false;
+            this.handleSocketError();
+        });
+        this.ws.addEventListener('pong', () => {
+            console.log('Pong received, connection is alive!');
+            this.isAlive = true;
+        });
+
+        setInterval(() => {
+            console.log('Checking websocket connection...');
+
+            if (this.isAlive) {
+                console.log('Connection previously alive, rechecking...');
+                this.isAlive = false;
+                this.ws.ping(noop);
+            } else {
+                console.log('Connection not alive, reconnecting...');
+                this.handleSocketError();
+            }
+
+        }, 60000);
 
         this.ws.on('open', () => {
             console.log('Socket connected, sending request for lightning data');
+            this.isAlive = true;
+
             this.ws.send(this.boundary, (error) => {
                 if (error) {
-                    // TODO: Retry websocket connection!
+                    this.setupWebSocket(this.port++);
                 } else {
                     console.log('Websocket message sent!');
                 }
@@ -49,6 +87,16 @@ export class BlitzortungService {
                 this.checkAndAddToStrikes(json.lat, json.lon, json.time);
             }
         });
+    }
+
+    private handleSocketError(): void {
+        try {
+            this.ws.terminate();
+            this.ws = null;
+            this.setupWebSocket(this.port++);
+        } catch (e) {
+            console.log(e);
+        }
     }
 
     private checkAndAddToStrikes(lat: number, lon: number, time: number) {
