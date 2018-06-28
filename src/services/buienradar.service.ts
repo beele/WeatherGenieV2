@@ -101,47 +101,47 @@ export class BuienradarService {
     private convertForecastIconCodeToWeatherCondition(iconCode: string): string {
         switch (iconCode) {
             case 'a':
-                return 'zonnig';
+                return 'Sunny';
             case 'b':
-                return 'plaatselijk bewolkt';
+                return 'Partly cloudy';
             case 'c':
-                return 'bewolkt';
+                return 'Cloudy';
             case 'd':
-                return 'plaatselijk bewolkt met mist';
+                return 'Partly cloudy with fog';
             case 'f':
-                return 'lichte buien';
+                return 'Light showers';
             case 'g':
-                return 'plaatselijk onweer';
+                return 'Local thunderstorms';
             case 'h':
-                return 'buien';
+                return 'Showers';
             case 'i':
-                return 'nachtelijke sneeuwbuien';
+                return 'Nightly snow';
             case 'j':
-                return 'licht bewolkt';
+                return 'Mostly sunny';
             case 'k':
-                return 'lichte buien';
+                return 'Light showers';
             case 'l':
-                return 'regen';
+                return 'Rain';
             case 'm':
-                return 'lichte regen';
+                return 'Light rain';
             case 'n':
-                return 'mistig';
+                return 'Foggy';
             case 'o':
-                return 'licht bewolkt';
+                return 'Mostly sunny';
             case 'p':
-                return 'bewolkt';
+                return 'Cloudy';
             case 'q':
-                return 'regen';
+                return 'Rain';
             case 'r':
-                return 'overwegend bewolkt';
+                return 'Mostly cloudy';
             case 's':
-                return 'onweer';
+                return 'Thunderstorms';
             case 't':
-                return 'sneeuw';
+                return 'Snow';
             case 'v':
-                return 'lichte sneeuw';
+                return 'Light snow';
             case 'w':
-                return 'smeltende sneeuw';
+                return 'Melting snow';
         }
     }
 }

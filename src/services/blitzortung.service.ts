@@ -6,6 +6,7 @@ import * as moment from 'moment';
 import {filter, toArray} from 'rxjs/operators';
 import {setInterval} from 'timers';
 import {noop} from 'rxjs/internal-compatibility';
+import Timer = NodeJS.Timer;
 
 @Injectable()
 export class BlitzortungService {
@@ -21,6 +22,7 @@ export class BlitzortungService {
     private maxPort: number = 8090;
 
     private isAlive: boolean = false;
+    private intervalId: Timer;
 
     constructor() {
         this.strikes = [];
@@ -28,15 +30,19 @@ export class BlitzortungService {
     }
 
     private setupWebSocket(port: number) {
-        // TODO: Check if port is maxed!
+        if (port >= this.maxPort) {
+            console.log('Cannot connect to websocket!');
+            return;
+        }
 
         const endpoint: string = 'ws://ws.blitzortung.org:' + port + '/';
         console.log('connecting to: ' + endpoint);
+
         this.ws = new WebSocket(endpoint);
         this.ws.addEventListener('error', (err) => {
             console.log(err.message);
             this.isAlive = false;
-            this.handleSocketError();
+            // this.handleSocketError();
         });
         this.ws.addEventListener('close', () => {
             console.log('socket closed');
@@ -48,23 +54,23 @@ export class BlitzortungService {
             this.isAlive = true;
         });
 
-        setInterval(() => {
-            console.log('Checking websocket connection...');
-
-            if (this.isAlive) {
-                console.log('Connection previously alive, rechecking...');
-                this.isAlive = false;
-                this.ws.ping(noop);
-            } else {
-                console.log('Connection not alive, reconnecting...');
-                this.handleSocketError();
-            }
-
-        }, 60000);
-
         this.ws.on('open', () => {
             console.log('Socket connected, sending request for lightning data');
             this.isAlive = true;
+
+            this.intervalId = setInterval(() => {
+                console.log('Checking websocket connection...');
+
+                if (this.isAlive) {
+                    console.log('Connection previously alive, rechecking...');
+                    this.isAlive = false;
+                    this.ws.ping(noop);
+                } else {
+                    console.log('Connection not alive, reconnecting...');
+                    this.handleSocketError();
+                }
+
+            }, 60000);
 
             this.ws.send(this.boundary, (error) => {
                 if (error) {
@@ -91,8 +97,14 @@ export class BlitzortungService {
 
     private handleSocketError(): void {
         try {
-            this.ws.terminate();
-            this.ws = null;
+            if (this.intervalId) {
+                this.intervalId.unref();
+            }
+
+            if (this.ws) {
+                this.ws.terminate();
+                this.ws = null;
+            }
             this.setupWebSocket(this.port++);
         } catch (e) {
             console.log(e);
